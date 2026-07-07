@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ VulnScanner Pro</title>
+    <style>
+        /* ---------- Global Reset & Dark Theme ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0e17;
+            font-family: 'Courier New', monospace;
+            color: #00ffcc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: #111b2b;
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid #00ffcc33;
+            box-shadow: 0 0 40px #00ffcc11;
+        }
+
+        /* ---------- Header ---------- */
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            color: #00ffcc;
+            text-shadow: 0 0 20px #00ffcc44;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #8899aa;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        /* ---------- Input Area ---------- */
+        .scan-box {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            background: #0d1624;
+            padding: 20px;
+            border-radius: 14px;
+            border: 1px solid #1e3044;
+        }
+        .scan-box input {
+            flex: 1;
+            padding: 14px 20px;
+            background: #0a0e17;
+            border: 1px solid #1e3044;
+            border-radius: 10px;
+            color: #00ffcc;
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            outline: none;
+            transition: 0.3s;
+            min-width: 200px;
+        }
+        .scan-box input:focus {
+            border-color: #00ffcc;
+            box-shadow: 0 0 20px #00ffcc22;
+        }
+        .scan-box input::placeholder {
+            color: #445566;
+        }
+        .scan-box button {
+            padding: 14px 35px;
+            background: #00ffcc;
+            color: #0a0e17;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+        .scan-box button:hover {
+            background: #00ddbb;
+            transform: scale(1.03);
+            box-shadow: 0 0 30px #00ffcc55;
+        }
+        .scan-box button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* ---------- Loading Spinner ---------- */
+        #loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #00ffcc;
+            font-size: 1.2rem;
+        }
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #1e3044;
+            border-top: 4px solid #00ffcc;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 15px;
+            vertical-align: middle;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* ---------- Results Section ---------- */
+        #results {
+            margin-top: 30px;
+            display: none;
+        }
+        .result-card {
+            background: #0d1624;
+            border: 1px solid #1e3044;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .result-card h3 {
+            color: #88aacc;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #1e3044;
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .badge {
+            background: #1e3044;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #aabbcc;
+        }
+
+        /* Port Chips */
+        .port-chip {
+            display: inline-block;
+            background: #00ffcc22;
+            border: 1px solid #00ffcc44;
+            padding: 6px 16px;
+            border-radius: 30px;
+            margin: 4px 6px 4px 0;
+            font-weight: bold;
+            color: #00ffcc;
+        }
+
+        /* Vulnerability Items */
+        .vuln-item {
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border-left: 4px solid #ffaa00;
+            background: #0a0e17;
+        }
+        .vuln-item .risk {
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        .risk-High { color: #ff4444; border-left-color: #ff4444; }
+        .risk-Medium { color: #ffaa00; border-left-color: #ffaa00; }
+        .risk-Info { color: #44aaff; border-left-color: #44aaff; }
+        .vuln-item .detail {
+            color: #aabbcc;
+            font-size: 0.9rem;
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            h1 { font-size: 1.6rem; }
+            .scan-box { flex-direction: column; }
+            .scan-box button { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ VulnScanner Pro</h1>
+        <p class="subtitle">⚡ Interactive Vulnerability Assessment Tool</p>
+
+        <!-- Scan Form -->
+        <div class="scan-box">
+            <input type="text" id="targetInput" placeholder="Enter target (e.g., scanme.nmap.org or 127.0.0.1)" value="scanme.nmap.org">
+            <button id="scanBtn">▶ SCAN</button>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading">
+            <div class="spinner"></div>
+            <span>Scanning target...</span>
+        </div>
+
+        <!-- Results -->
+        <div id="results">
+            <!-- Open Ports -->
+            <div class="result-card">
+                <h3>🔓 Open Ports <span class="badge" id="portCount">0</span></h3>
+                <div id="portList"></div>
+            </div>
+
+            <!-- Vulnerabilities -->
+            <div class="result-card">
+                <h3>⚠️ Vulnerabilities <span class="badge" id="vulnCount">0</span></h3>
+                <div id="vulnList"></div>
+            </div>
+
+            <!-- Summary -->
+            <div class="result-card" style="border-color:#00ffcc33;">
+                <h3>📊 Summary</h3>
+                <div id="summaryText" style="color:#8899aa;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const scanBtn = document.getElementById('scanBtn');
+        const targetInput = document.getElementById('targetInput');
+        const loading = document.getElementById('loading');
+        const resultsDiv = document.getElementById('results');
+
+        scanBtn.addEventListener('click', async () => {
+            const target = targetInput.value.trim();
+            if (!target) {
+                alert('Please enter a target (e.g., scanme.nmap.org)');
+                return;
+            }
+
+            // Disable button, show loading
+            scanBtn.disabled = true;
+            scanBtn.textContent = '⏳ SCANNING...';
+            loading.style.display = 'block';
+            resultsDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/scan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ target })
+                });
+
+                const data = await response.json();
+
+                // Hide loading
+                loading.style.display = 'none';
+                resultsDiv.style.display = 'block';
+
+                // --- Render Ports ---
+                const portList = document.getElementById('portList');
+                portList.innerHTML = '';
+                if (data.open_ports && data.open_ports.length > 0) {
+                    data.open_ports.forEach(p => {
+                        const chip = document.createElement('span');
+                        chip.className = 'port-chip';
+                        chip.textContent = `${p}/tcp`;
+                        portList.appendChild(chip);
+                    });
+                } else {
+                    portList.innerHTML = '<span style="color:#667788;">No open ports found.</span>';
+                }
+                document.getElementById('portCount').textContent = data.open_ports ? data.open_ports.length : 0;
+
+                // --- Render Vulnerabilities ---
+                const vulnList = document.getElementById('vulnList');
+                vulnList.innerHTML = '';
+                const vulns = data.vulnerabilities || [];
+                if (vulns.length > 0) {
+                    vulns.forEach(v => {
+                        const div = document.createElement('div');
+                        div.className = `vuln-item risk-${v.risk}`;
+                        div.innerHTML = `
+                            <span class="risk">[${v.risk}]</span>
+                            <strong>${v.type}</strong>
+                            <span class="detail">— ${v.detail}</span>
+                        `;
+                        vulnList.appendChild(div);
+                    });
+                } else {
+                    vulnList.innerHTML = '<span style="color:#667788;">No vulnerabilities found. 🎉</span>';
+                }
+                document.getElementById('vulnCount').textContent = vulns.length;
+
+                // --- Summary ---
+                document.getElementById('summaryText').innerHTML = `
+                    <strong>Target:</strong> ${data.target} <br>
+                    <strong>Web URL scanned:</strong> ${data.web_url || 'N/A'} <br>
+                    <strong>Total Open Ports:</strong> ${data.open_ports ? data.open_ports.length : 0} <br>
+                    <strong>Total Vulnerabilities:</strong> ${vulns.length}
+                `;
+
+            } catch (error) {
+                alert('Error scanning target: ' + error.message);
+                loading.style.display = 'none';
+            } finally {
+                scanBtn.disabled = false;
+                scanBtn.textContent = '▶ SCAN';
+            }
+        });
+    </script>
+</body>
+</html>

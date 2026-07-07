@@ -1,0 +1,43 @@
+{
+    "scan_time": "2026-07-07T13:39:41.683499",
+    "target": "scanme.nmap.org",
+    "open_ports": [
+        22,
+        80
+    ],
+    "web_vulnerabilities": [
+        {
+            "type": "Missing Header",
+            "detail": "HSTS missing (risk: downgrade attacks)",
+            "risk": "Medium"
+        },
+        {
+            "type": "Missing Header",
+            "detail": "CSP missing (risk: XSS)",
+            "risk": "Medium"
+        },
+        {
+            "type": "Missing Header",
+            "detail": "MIME sniffing protection missing",
+            "risk": "Medium"
+        },
+        {
+            "type": "Missing Header",
+            "detail": "Clickjacking protection missing",
+            "risk": "Medium"
+        },
+        {
+            "type": "Server Info",
+            "detail": "Server: Apache/2.4.7 (Ubuntu)",
+            "risk": "Info"
+        }
+    ],
+    "summary": {
+        "total_open_ports": 2,
+        "total_web_issues": 5,
+        "risk_breakdown": {
+            "Medium": 4,
+            "Info": 1
+        }
+    }
+}

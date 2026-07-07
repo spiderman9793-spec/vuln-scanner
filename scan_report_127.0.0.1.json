@@ -1,0 +1,42 @@
+{
+    "scan_time": "2026-07-07T13:59:47.684519",
+    "target": "127.0.0.1",
+    "open_ports": [
+        8080
+    ],
+    "web_vulnerabilities": [
+        {
+            "type": "Missing Header",
+            "detail": "HSTS missing (risk: downgrade attacks)",
+            "risk": "Medium"
+        },
+        {
+            "type": "Missing Header",
+            "detail": "CSP missing (risk: XSS)",
+            "risk": "Medium"
+        },
+        {
+            "type": "Missing Header",
+            "detail": "MIME sniffing protection missing",
+            "risk": "Medium"
+        },
+        {
+            "type": "Missing Header",
+            "detail": "Clickjacking protection missing",
+            "risk": "Medium"
+        },
+        {
+            "type": "Server Info",
+            "detail": "Server: SimpleHTTP/0.6 Python/3.14.5",
+            "risk": "Info"
+        }
+    ],
+    "summary": {
+        "total_open_ports": 1,
+        "total_web_issues": 5,
+        "risk_breakdown": {
+            "Medium": 4,
+            "Info": 1
+        }
+    }
+}
